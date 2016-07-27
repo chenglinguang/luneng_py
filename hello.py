@@ -8,6 +8,8 @@ from wtforms import StringField,SubmitField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_migrate import Migrate,MigrateCommand
+
 
 basedir=os.path.abspath(os.path.dirname(__file__))
 
@@ -21,6 +23,9 @@ db=SQLAlchemy(app)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment=Moment(app)
+migrate=Migrate(app,db)
+manager.add_command('db',MigrateCommand)
+
 
 def make_shell_context():
     return dict(app=app,db=db,User=User,Role=Role)
