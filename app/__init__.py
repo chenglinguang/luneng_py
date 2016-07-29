@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,render_template
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
@@ -20,9 +20,15 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
-
+    
+    #注册蓝本
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    #注册认证蓝本
+    from .auth import auth as auth_blueprint
+    #认证蓝本登陆： http://localhost:5000/auth/login
+    app.register_blueprint(auth_blueprint,url_prefix='/auth')
 
     return app
 
