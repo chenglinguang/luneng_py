@@ -2,8 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
-from . import login_manager
-
+from . import db,login_manager
+from flask import current_app,request
+from datetime import datetime
+import hashlib
 
 
 class Permission:
@@ -53,6 +55,16 @@ class User(UserMixin,db.Model):
     username=db.Column(db.String(64),unique=True,index=True)
     password_hash=db.Column(db.String(128))
     role_id=db.Column(db.Integer,db.ForeignKey('roles.id'))
+    #真是姓名
+    name=db.Column(db.String(64))
+    #所在地
+    location=db.Column(db.String(64))
+    #自我介绍
+    about_me=db.Column(db.Text())
+    #注册日期
+    member_since=db.Column(db.DateTime(),default=datetime.utcnow)
+    #最后访问日期
+    last_seen=db.Column(db.DateTime(),default=datetime.utcnow)
 
     def __init__(self,**kwargs):
         super(User, self).__init__(**kwargs)
@@ -76,11 +88,24 @@ class User(UserMixin,db.Model):
         return self.role is not None and (self.role.permissions & permissions) == permissions
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
+    #更新每次登陆后的时间记录
+    def ping(self):
+        self.last_seen=datetime.utcnow()
+        db.session.add(self)
+    #图像生成器
+    def gravatar(self,size=100,default='identicon',rating='g'):
+        if request.is_secure:
+            url = 'https://secure.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        hash=hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(url=url, hash=hash, size=size, default=default, rating=rating)
 
     def __repr__(self):
         return '<User %r>' % self.username
 
 class AnonymousUser(AnonymousUserMixin):
+    
     def can(self, permissions):
         return False
 

@@ -4,9 +4,14 @@ from . import auth
 from ..models import User
 from .forms import LoginForm,RegistrationForm,ChangePasswordForm
 from .. import db
-from .decorators import admin_required, permission_required
-from .models import Permission
+#from decorators import admin_required, permission_required
+#from .models import Permission
 
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
+    
 
 @auth.route('/login',methods=['GET','POST'])
 def login():
@@ -53,18 +58,6 @@ def change_password():
             flash('Invalid password.')
     return render_template('auth/change_password.html',form=form)
 
-@main.route('/admin')
-@login_required
-@admin_required
-def for_admins_only():
-    return "For administrators!"
-
-
-@main.route('/moderator')
-@login_required
-@permission_required(Permission.MODERATE_COMMENTS)
-def for_moderators_only():
-    return "For comment moderators!"
 
 
 
