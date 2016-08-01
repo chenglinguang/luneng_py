@@ -1,7 +1,7 @@
 from flask import render_template,redirect,request,url_for,flash
 from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
-from ..models import User
+from ..models import User,Role,Post,Permission
 from .forms import LoginForm,RegistrationForm,ChangePasswordForm
 from .. import db
 #from decorators import admin_required, permission_required

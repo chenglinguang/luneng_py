@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField,SubmitField,TextAreaField,BooleanField,SelectField
 from wtforms.validators import Required,Length,Email,Regexp
 from wtforms import ValidationError
-from ..models import Role, User
+from ..models import Role, User, Post
 
 class NameForm(Form):
     name=StringField('请输入你的名字?',validators=[Required()])
