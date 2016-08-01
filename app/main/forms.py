@@ -41,5 +41,9 @@ class EditProfileAdminForm(Form):
             raise ValidationError('用户名已经被注册过')
 
 
+class PostForm(Form):
+    body=TextAreaField("What's on your mind?", validators=[Required()])
+    submit = SubmitField('Submit')
+
 
 
