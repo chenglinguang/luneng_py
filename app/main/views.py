@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for,flash,request,current_app
+from flask import render_template, session, redirect, url_for,flash,request,current_app,abort
 from . import main
 from .forms import NameForm,EditProfileForm,EditProfileAdminForm,PostForm
 from .. import db
@@ -74,6 +74,11 @@ def edit_profile_admin(id):
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
 
+
+@main.route('/post/<int:id>')
+def post(id):
+    post=Post.query.get_or_404(id)
+    return render_template('post.html',posts=[post])
 
 
 
