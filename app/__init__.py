@@ -38,6 +38,10 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     #认证蓝本登陆： http://localhost:5000/auth/login
     app.register_blueprint(auth_blueprint,url_prefix='/auth')
+    
+    #注册API蓝本
+    from .api_1_0 import api as api_1_0_blueprint
+    app.register_blueprint(api_1_0_blueprint,url_prefix='/api/v1.0')
 
     return app
 
