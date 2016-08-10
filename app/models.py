@@ -3,7 +3,7 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import db,login_manager
-from flask import current_app,request
+from flask import current_app,request,url_for
 from datetime import datetime
 import hashlib
 from markdown import markdown
@@ -173,7 +173,7 @@ class User(UserMixin,db.Model):
 
     def generate_auth_token(self,expiration):
         s=Serializer(current_app.config['SECRET_KEY'],expires_in=expiration)
-        return s.dumps('id':self.id)
+        return s.dumps({'id':self.id})
     def to_json(self):
         json_user={
             'url': url_for('api.get_post', id=self.id, _external=True),
@@ -225,8 +225,8 @@ class Post(db.Model):
             'body':self.body,
             'body_html':self.body_html,
             'timestamp':self.timestamp,
-            'author':url_for('api.get_user',id=self.author_id,_external=True)
-            'comments':url_for('api.get_post_comments',id=self.id,_external=True)
+            'author':url_for('api.get_user',id=self.author_id,_external=True),
+            'comments':url_for('api.get_post_comments',id=self.id,_external=True),
             'comment_count':self.comments.count()
         }
         return json_post
